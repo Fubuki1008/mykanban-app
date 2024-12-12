@@ -1,0 +1,70 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+.gantt-tytle {
+  background-color: #81eaf6;
+  text-align: center;
+}
+.gantt-chart-tytle {
+  text-align: center;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  shape-rendering: crispEdges;
+}
+.bar {
+  fill: steelblue;
+  stroke: #333; /* 境界線の色 */
+  stroke-width: 1px; /* 境界線の幅 */
+}
+.bar-label {
+  fill: white;
+  font-size: 12px;
+  text-anchor: middle;
+}
+
+.board-container {
+  display: flex; /* フレックスレイアウト */
+  margin-bottom: 20px; /* ボード間の余白 */
+  align-items: flex-start; /* 縦方向の揃え */
+}
+/* ボード別のデザイン */
+#board-container-BOARD-001 {
+  background-color: lightgreen;
+}
+
+#board-container-BOARD-002 {
+  background-color: lightskyblue;
+}
+
+#board-container-BOARD-003 {
+  background-color: red;
+}
+
+#board-container-BOARD-004 {
+  background-color: yellow;
+}
+
+#board-container-BOARD-005 {
+  background-color: palevioletred;
+}
+
+.board-title {
+  flex: 0 0 200px; /* 固定幅：200px */
+  /* border-right: 1px solid #ddd; 縦の仕切り線 */
+  text-align: center;
+}
+
+.board-chart {
+  flex: 1; /* 残りのスペースを使用 */
+  padding-left: 10px; /* ボード名との間隔 */
+}
+
+/* SVG背景のスタイル */
+svg {
+  background-color: #f9f9f9; /* 背景色 */
+  border: 1px solid #ddd; /* 枠線 */
+}

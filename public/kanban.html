@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カンバン方式タスク管理</title>
+    <link rel="stylesheet" href="kanban.css">
+    
+</head>
+<body>
+    <header class="kanban-tytle">
+    <h1>カンバンボードタスク管理
+        <p class="header-text">＊注：ボードは最大５つ目まで追加できます。</p>
+    </h1>
+
+    <!-- ↓確認用 -->
+    <!-- <p id="response-message"></p> -->
+    
+    <form id="">
+        <button type="submit"><a href="gantt-chart.html">ガントチャート</a></button>
+    </form>
+    </header>
+
+    <!-- ボード追加フォーム -->
+    <form id="board-form">
+        <label for="board-name">新しいボード名:</label>
+        <input type="text" id="board-name" required>
+        <button type="submit">ボードを追加</button>
+    </form>
+
+    <!-- カンバンボード -->
+    <div id="kanban">
+        
+    </div>
+
+    <script src="kanban.js"></script>
+    <script>
+        document.getElementById('board-form').addEventListener('submit', async (event) => {
+            event.preventDefault(); // フォームのデフォルト動作をキャンセル
+
+            // 入力値を取得
+            // const boardName = document.getElementById('board-name').value;
+
+            try {
+                // APIリクエストを送信
+                const response = await fetch('http://localhost:3000/boards', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ title: boardName }),
+                });
+
+                // レスポンスを処理
+                // const result = await response.json();
+
+                if (response.ok) {
+                    const { boardID } = await response.json();
+                    addBoardToUI(boardID, boardName); // サーバーから受け取った正しい ID を使う
+                    // 成功メッセージを表示
+                    // document.getElementById('response-message').innerText = 
+                    //     `ボードが作成されました！ ID: ${boardID}`;
+                } else {
+                    const { error } = await response.json();
+                    // エラーメッセージを表示
+                    // document.getElementById('response-message').innerText = 
+                    //     `エラー: ${error || '不明なエラー'}`;
+                }
+            } catch (error) {
+                // 通信エラーを表示
+                // document.getElementById('response-message').innerText = 
+                //     `通信エラーが発生しました: ${error.message}`;
+            }
+        });
+        // 修正のため追加
+        function addBoardToUI(boardID, boardName) {
+        const kanbanDiv = document.getElementById('kanban');
+        const boardDiv = document.createElement('div');
+        boardDiv.setAttribute('data-board-id', boardID); // 正しい boardID を設定
+        boardDiv.innerText = boardName;
+        kanbanDiv.appendChild(boardDiv);
+        }
+    </script>
+</body>
+</html>
+

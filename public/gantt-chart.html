@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ガントチャート</title>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="stylesheet" href="gantt-chart.css">
+</head>
+<body>
+<header class="gantt-tytle">
+    <h1>ガントチャート</h1>
+    <form id="">
+        <button type="submit"><a href="kanban.html">タスク管理</a></button>
+    </form>
+</header>
+<h1 class="gantt-chart-tytle">タイムスケジュール</h1>
+
+  <!-- 期間選択　追加 -->
+<div id="view-options">
+  <label for="view-range">表示期間:</label>
+  <select id="view-range">
+    <option value="day">1日</option>
+    <option value="week" selected>1週間</option>
+    <option value="month">1か月</option>
+  </select>
+</div>
+
+<div id="chart"></div>
+<script src="gantt-chart.js"></script>
+</body>
+</html>

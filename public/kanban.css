@@ -1,0 +1,279 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+/* 上↑ bgc　仮入力 */
+
+h1 {
+    text-align: center;
+    margin: 0 0 20px 0;
+}
+
+form {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+input {
+    padding: 1px;
+    font-size: 12px;
+}
+
+button {
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#kanban {
+    display: flex;
+    justify-content: space-around;
+    gap: 15px;
+}
+
+/* ボードの共通デザイン */
+
+.board-name-style {
+    margin: 0 0 10px 0;
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
+    font-size: 25px;
+}
+
+.kanban-column {
+    flex: 1;
+    background-color: #fff9ee;
+    border-radius: 15px;
+    min-height: 300px;
+    overflow-y: auto;
+    box-shadow: 2px 2px 4px gray;
+}
+
+/* ボード別のデザイン */
+[data-board-id="BOARD-001"] {
+    border-left: 2px solid lightgreen;
+}
+
+[data-board-id="BOARD-002"] {
+    border-left: 2px solid lightskyblue;
+}
+
+[data-board-id="BOARD-003"] {
+    border-left: 2px solid red;
+}
+
+[data-board-id="BOARD-004"] {
+    border-left: 2px solid yellow;
+}
+
+[data-board-id="BOARD-005"] {
+    border-left: 2px solid palevioletred;
+}
+
+[data-board-id="BOARD-001"] .board-name-style {
+    background-color: lightgreen;
+}
+
+[data-board-id="BOARD-002"] .board-name-style {
+    background-color: lightskyblue;
+}
+
+[data-board-id="BOARD-003"] .board-name-style {
+    background-color: red;
+}
+
+[data-board-id="BOARD-004"] .board-name-style {
+    background-color: yellow;
+}
+
+[data-board-id="BOARD-005"] .board-name-style {
+    background-color: palevioletred;
+}
+
+.kanban-task {
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 5px 0;
+    padding: 10px;
+    cursor: grab;
+}
+
+.add-board-button {
+    display: flex;
+    justify-content: center;
+}
+.add-task {
+    display: flex;
+    justify-content: center;
+    width: 90%;
+    background-color: #fff;
+    color: #479cec;
+    border-radius: 20px;
+    border: none;
+}
+
+.kanban-task.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.kanban-header {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 12px;
+    background-color: #f20d0d;
+}
+
+.kanban-header h2 {
+    margin: 0;
+}
+
+.delete-board {
+    background-color: white;
+    color: red;
+    border-radius: 20px;
+}
+
+.delete-board-button {
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.delete-board-button:hover {
+    background-color: darkred;
+}
+
+/* ヘッダー */
+.kanban-tytle {
+    background-color: #81eaf6;
+}
+
+/* モーダルのオーバーレイ */
+.modal {
+    
+    position: fixed; /* 画面全体に固定 */
+    z-index: 1000; /* 他の要素より上に表示 */
+    top: 0;
+    left: 0;
+    width: 100%; /* 画面全体の幅 */
+    height: 100%; /* 画面全体の高さ */
+    background-color: rgba(0, 0, 0, 0.5); /* 半透明の黒背景 */
+}
+
+/* モーダルコンテンツ */
+.modal-content {
+    position: relative; /* 親要素（モーダルオーバーレイ）の中で配置 */
+    background-color: #fff; /* 背景色を白に設定 */
+    margin: auto; /* 自動で中央配置 */
+    padding: 20px; /* 内側の余白を設定 */
+    border: 1px solid #ccc; /* 境界線を設定 */
+    border-radius: 5px; /* 角を丸くする */
+    width: 80%; /* 幅を80%に設定 */
+    max-width: 500px; /* 最大幅を500pxに制限 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* シャドウ効果を追加 */
+    
+}
+
+/* モーダルの閉じるボタン */
+.modal-close {
+    position: absolute; /* モーダル内で絶対位置 */
+    top: 10px; /* 上部からの位置 */
+    right: 10px; /* 右端からの位置 */
+    background-color: #f44336; /* 赤い背景色 */
+    color: #fff; /* 文字色を白に設定 */
+    border: none; /* 境界線を削除 */
+    border-radius: 50%; /* 円形にする */
+    width: 25px; /* 幅 */
+    height: 25px; /* 高さ */
+    font-size: 14px; /* フォントサイズ */
+    line-height: 25px; /* ボタン内で文字を中央配置 */
+    text-align: center; /* 文字を中央配置 */
+    cursor: pointer; /* マウスカーソルをポインタに変更 */
+}
+
+/* モーダル表示時 */
+.modal.show {
+    display: block; /* モーダルを表示 */
+}
+
+.modal-form {
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal-items {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.counter {
+    display: block;
+    text-align: right;
+    font-size: 12px;
+    color: grey;
+    margin-bottom: 5px;
+}
+
+
+/* タスク　スタイル */
+.task {
+    border-radius: 15px;
+    background-color: #fff;
+    margin: 10px 10px 15px 10px;
+    box-shadow: 2px 2px 4px gray;
+}
+
+.task-style {
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    background: #dff;
+    text-align: center;
+    margin-bottom: 5px;
+}
+.time-style {
+    border: solid;
+    text-align: center;
+    margin: 5px;
+}
+/* 試し　JSの　<p class="border">開始: ${startFormatted}</p>　のところ */
+.border { 
+    border-bottom: 3px dotted #000;
+    margin: 0;
+    padding: 10px;
+}
+/* 試し２ */
+.border-2 {
+    margin: 0;
+    padding: 10px;
+}
+.memo-tytle-style {
+    margin-top: 15px;
+    text-align: center;
+    
+}
+.memo-style {
+    border: solid;
+    margin: 5px;
+}
+.placeholder {
+    color: gray;
+    font-style: italic;
+}
+.delete-task {
+    margin: 5px;
+}
+
+/* tuika */
+.header-text {
+    font-size: 15px;
+}
