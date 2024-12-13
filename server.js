@@ -200,23 +200,33 @@ app.get('/tasks/boards', async (req, res) => {
         LEFT JOIN tasks t ON c.taskID = t.taskID
         ORDER BY b.title, t.start;
       `;
+
+      // クエリの実行
       const [rows] = await db.query(query);
+      // rows の型と内容を確認するログを追加
+      console.log('Rows:', rows);
   
+      // クエリ結果の検証
+    if (!Array.isArray(rows)) {
+        console.error('Query result is not an array:', rows);
+        return res.status(500).json({ error: 'Invalid query result' });
+      }
+
       const result = rows.reduce((acc, row) => {
         if (!acc[row.board_name]) {
           acc[row.board_name] = [];
         }
         acc[row.board_name].push({
           task_name: row.task_name,
-          start_date: row.start_date,
-          end_date: row.end_date,
+          start_date: row.start,
+          end_date: row.end,
         });
         return acc;
       }, {});
   
       res.json(result);
     } catch (error) {
-      console.error(error);
+      console.error('Error during query execution or processing:', error);
       res.status(500).send('Server error');
     }
   });
