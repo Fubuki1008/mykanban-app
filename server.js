@@ -145,91 +145,91 @@ app.post('/boards', (req, res) => {
 });
 
 // **ボードごとのタスク取得API**    ガントチャート用
-// app.get('/tasks/boards', (req, res) => {
-//     const query = `
-//         SELECT b.boardID, b.title AS boardTitle, t.taskID, t.title AS taskTitle, t.start, t.end, t.memo
-//         FROM boards b
-//         LEFT JOIN control c ON b.boardID = c.boardID
-//         LEFT JOIN tasks t ON c.taskID = t.taskID
-//         ORDER BY b.boardID, t.start;
-//     `;
-
-//     db.query(query, (err, results) => {
-//         if (err) {
-//             console.error('MySQL Error during board tasks retrieval:', err.message);
-//             return res.status(500).json({ error: 'Failed to fetch tasks by boards', details: err.message });
-//         }
-
-//         // 結果をボードごとにグループ化
-//         const groupedData = results.reduce((acc, row) => {
-//             const { boardID, boardTitle, taskID, taskTitle, start, end, memo } = row;
-
-//             if (!acc[boardID]) {
-//                 acc[boardID] = {
-//                     boardID,
-//                     boardTitle,
-//                     tasks: [],
-//                 };
-//             }
-
-//             if (taskID) {
-//                 acc[boardID].tasks.push({ taskID, taskTitle, start, end, memo });
-//             }
-
-//             return acc;
-//         }, {});
-
-//         // オブジェクトを配列形式に変換
-//         const response = Object.values(groupedData);
-
-//         res.status(200).json(response);
-//     });
-// });
-
-//修正後
-app.get('/tasks/boards', async (req, res) => {
-    try {
-      const query = `
-        SELECT 
-          b.title AS board_name, 
-          t.title AS task_name, 
-          t.start, 
-          t.end
+app.get('/tasks/boards', (req, res) => {
+    const query = `
+        SELECT b.boardID, b.title AS boardTitle, t.taskID, t.title AS taskTitle, t.start, t.end, t.memo
         FROM boards b
         LEFT JOIN control c ON b.boardID = c.boardID
         LEFT JOIN tasks t ON c.taskID = t.taskID
-        ORDER BY b.title, t.start;
-      `;
+        ORDER BY b.boardID, t.start;
+    `;
 
-      // クエリの実行
-      const [rows] = await db.query(query);
-      // rows の型と内容を確認するログを追加
-      console.log('Rows:', rows);
-  
-      // クエリ結果の検証
-    if (!Array.isArray(rows)) {
-        console.error('Query result is not an array:', rows);
-        return res.status(500).json({ error: 'Invalid query result' });
-      }
-
-      const result = rows.reduce((acc, row) => {
-        if (!acc[row.board_name]) {
-          acc[row.board_name] = [];
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('MySQL Error during board tasks retrieval:', err.message);
+            return res.status(500).json({ error: 'Failed to fetch tasks by boards', details: err.message });
         }
-        acc[row.board_name].push({
-          task_name: row.task_name,
-          start_date: row.start,
-          end_date: row.end,
-        });
-        return acc;
-      }, {});
+
+        // 結果をボードごとにグループ化
+        const groupedData = results.reduce((acc, row) => {
+            const { boardID, boardTitle, taskID, taskTitle, start, end, memo } = row;
+
+            if (!acc[boardID]) {
+                acc[boardID] = {
+                    boardID,
+                    boardTitle,
+                    tasks: [],
+                };
+            }
+
+            if (taskID) {
+                acc[boardID].tasks.push({ taskID, taskTitle, start, end, memo });
+            }
+
+            return acc;
+        }, {});
+
+        // オブジェクトを配列形式に変換
+        const response = Object.values(groupedData);
+
+        res.status(200).json(response);
+    });
+});
+
+//
+// app.get('/tasks/boards', async (req, res) => {
+//     try {
+//       const query = `
+//         SELECT 
+//           b.title AS board_name, 
+//           t.title AS task_name, 
+//           t.start, 
+//           t.end
+//         FROM boards b
+//         LEFT JOIN control c ON b.boardID = c.boardID
+//         LEFT JOIN tasks t ON c.taskID = t.taskID
+//         ORDER BY b.title, t.start;
+//       `;
+
+//       // クエリの実行
+//       const [rows] = await db.query(query);
+//       // rows の型と内容を確認するログを追加
+//       console.log('Rows:', rows);
   
-      res.json(result);
-    } catch (error) {
-      console.error('Error during query execution or processing:', error);
-      res.status(500).send('Server error');
-    }
-  });
+//       // クエリ結果の検証
+//     if (!Array.isArray(rows)) {
+//         console.error('Query result is not an array:', rows);
+//         return res.status(500).json({ error: 'Invalid query result' });
+//       }
+
+//       const result = rows.reduce((acc, row) => {
+//         if (!acc[row.board_name]) {
+//           acc[row.board_name] = [];
+//         }
+//         acc[row.board_name].push({
+//           task_name: row.task_name,
+//           start_date: row.start,
+//           end_date: row.end,
+//         });
+//         return acc;
+//       }, {});
+  
+//       res.json(result);
+//     } catch (error) {
+//       console.error('Error during query execution or processing:', error);
+//       res.status(500).send('Server error');
+//     }
+//   });
 
 
 //  タスク作成API   修正後  順序付き識別子ver
