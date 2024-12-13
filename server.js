@@ -191,14 +191,14 @@ app.get('/tasks/boards', async (req, res) => {
     try {
       const query = `
         SELECT 
-          b.name AS board_name, 
-          t.name AS task_name, 
-          t.start_date, 
-          t.end_date
+          b.title AS board_name, 
+          t.title AS task_name, 
+          t.start, 
+          t.end
         FROM boards b
-        LEFT JOIN control c ON b.id = c.board_id
-        LEFT JOIN tasks t ON c.task_id = t.id
-        ORDER BY b.name, t.start_date;
+        LEFT JOIN control c ON b.boardID = c.boardID
+        LEFT JOIN tasks t ON c.taskID = t.taskID
+        ORDER BY b.title, t.start;
       `;
       const [rows] = await db.query(query);
   
