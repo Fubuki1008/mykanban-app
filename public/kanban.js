@@ -282,6 +282,7 @@ function renderTask(task) {
   taskElement.className = 'task'; // CSSクラスを適用
   taskElement.draggable = true; // ドラッグ可能に設定
   taskElement.id = task.taskID; // タスクIDを設定
+
   taskElement.innerHTML = `
     <h3 class="task-style">${task.title}</h3>
     <div class="time-style">
@@ -292,13 +293,126 @@ function renderTask(task) {
       <div class="memo-title-style">詳細情報</div>
       <p class="memo-style">${task.memo || '<span class="placeholder">詳細情報</span>'}</p>
     </div>
+    <button class="edit-task">編集</button>
     <button class="delete-task">削除</button>
   `;
 
   boardElement.appendChild(taskElement); // ボードにタスクを追加
+  taskElement.querySelector('.edit-task').addEventListener('click', () => openEditTaskModal(task.taskID));  // 編集ボタンイベント追加
   taskElement.querySelector('.delete-task').addEventListener('click', () => deleteTask(task.taskID)); // 削除ボタンイベント追加
   taskElement.addEventListener('dragstart', dragStart); // ドラッグ開始イベント
   taskElement.addEventListener('dragend', dragEnd);     // ドラッグ終了イベント
+}
+
+// タスク編集用モーダルを表示する関数
+function openEditTaskModal(taskID) {
+  const task = tasks.find(t => t.taskID === taskID); // タスクIDからタスクを取得
+  if (!task) return;
+
+  const modal = document.createElement('div');
+  modal.className = 'modal';
+  modal.innerHTML = `
+    <div class="modal-content">
+      <h3>タスクを編集</h3>
+      <form id="edit-task-form" class="modal-form">
+        <div>
+          <label>
+            タスク名（20字以内）
+            <input type="text" class="modal-items" id="edit-task-name" maxlength="20" value="${task.title}" required>
+            <span id="edit-task-name-counter" class="counter">残り${20 - task.title.length}文字</span>
+          </label>
+          <label>
+            開始時間
+            <input type="datetime-local" class="modal-items" id="edit-task-start" value="${task.start}" required>
+          </label>
+          <label>
+            終了時間
+            <input type="datetime-local" class="modal-items" id="edit-task-end" value="${task.end}" required>
+            <span id="edit-task-error" style="color: red; display: none;">終了日時は開始日時より後に設定してください</span>
+          </label>
+          <label>
+            メモ（100字以内）
+            <textarea id="edit-task-memo" class="modal-items" rows=4 maxlength="100">${task.memo}</textarea>
+            <span id="edit-task-memo-counter" class="counter">残り${100 - task.memo.length}文字</span>
+          </label>
+        </div>
+        <div>
+          <button type="submit" id="save-edit-task-button">保存</button>
+          <button type="button" id="close-edit-modal">キャンセル</button>
+        </div>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  const taskNameInput = document.getElementById('edit-task-name');
+  const taskMemoInput = document.getElementById('edit-task-memo');
+  const taskStartInput = document.getElementById('edit-task-start');
+  const taskEndInput = document.getElementById('edit-task-end');
+  const taskError = document.getElementById('edit-task-error');
+  const taskNameCounter = document.getElementById('edit-task-name-counter');
+  const taskMemoCounter = document.getElementById('edit-task-memo-counter');
+
+  const updateCounter = (input, counter, maxLength) => {
+    const remaining = maxLength - input.value.length;
+    counter.textContent = `残り${remaining}文字`;
+  };
+
+  const validateEndDate = () => {
+    const startTime = new Date(taskStartInput.value);
+    const endTime = new Date(taskEndInput.value);
+    if (startTime > endTime) {
+      taskError.style.display = 'block';
+      document.getElementById('save-edit-task-button').disabled = true;
+    } else {
+      taskError.style.display = 'none';
+      document.getElementById('save-edit-task-button').disabled = false;
+    }
+  };
+
+  taskNameInput.addEventListener('input', () => updateCounter(taskNameInput, taskNameCounter, 20));
+  taskMemoInput.addEventListener('input', () => updateCounter(taskMemoInput, taskMemoCounter, 100));
+  taskStartInput.addEventListener('input', validateEndDate);
+  taskEndInput.addEventListener('input', validateEndDate);
+
+  document.getElementById('edit-task-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // 更新データの取得
+    const updatedTask = {
+      ...task,
+      title: taskNameInput.value,
+      start: taskStartInput.value,
+      end: taskEndInput.value,
+      memo: taskMemoInput.value,
+    };
+
+    // サーバーへの更新リクエスト送信
+    try {
+      const response = await fetch(`http://localhost:3000/tasks/${taskID}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedTask),
+      });
+
+      if (!response.ok) throw new Error(`Failed to update task on server`);
+
+      // ローカルデータの更新
+      tasks = tasks.map(t => (t.taskID === taskID ? updatedTask : t));
+      saveToLocalStorage();
+
+      // UI更新
+      document.getElementById(taskID).remove();
+      renderTask(updatedTask);
+
+      modal.remove();
+    } catch (error) {
+      console.error('Error updating task:', error);
+      alert('タスクの更新に失敗しました。サーバーを確認してください。');
+    }
+  });
+
+  document.getElementById('close-edit-modal').addEventListener('click', () => modal.remove());
 }
 
 // タスクを削除する関数

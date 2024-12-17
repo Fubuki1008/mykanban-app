@@ -288,6 +288,43 @@ app.post('/tasks', (req, res) => {
     });
 });
 
+// **タスク編集API**
+app.put('/tasks/:taskID', (req, res) => {
+    const { taskID } = req.params; // タスクIDを取得
+    const { title, start, end, memo } = req.body; // 更新内容を取得
+
+    // 必須項目の確認
+    if (!title || !start || !end) {
+        return res.status(400).json({ error: 'Title, start, and end are required' });
+    }
+
+    // タスクIDの確認
+    if (!/^TASK-\d{4}$/.test(taskID)) {
+        console.error('Invalid taskID format:', taskID);
+        return res.status(400).json({ error: 'Invalid taskID format' });
+    }
+
+    // タスクを更新するクエリ
+    const updateTaskQuery = `
+        UPDATE tasks 
+        SET title = ?, start = ?, end = ?, memo = ?
+        WHERE taskID = ?
+    `;
+
+    db.query(updateTaskQuery, [title, start, end, memo, taskID], (err, result) => {
+        if (err) {
+            console.error('MySQL Error:', err.message);
+            return res.status(500).json({ error: 'Failed to update task', details: err.message });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Task not found' });
+        }
+
+        res.status(200).json({ message: 'Task updated successfully', taskID });
+    });
+});
+
 // **タスク削除API**
 app.delete('/tasks/:taskID', (req, res) => {
     const { taskID } = req.params;
