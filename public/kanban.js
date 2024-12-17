@@ -293,8 +293,10 @@ function renderTask(task) {
       <div class="memo-title-style">詳細情報</div>
       <p class="memo-style">${task.memo || '<span class="placeholder">詳細情報</span>'}</p>
     </div>
-    <button class="edit-task">編集</button>
-    <button class="delete-task">削除</button>
+    <div class="task-button">
+      <button class="edit-task">編集</button>
+      <button class="delete-task">削除</button>
+    </div>
   `;
 
   boardElement.appendChild(taskElement); // ボードにタスクを追加

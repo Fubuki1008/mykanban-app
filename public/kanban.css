@@ -101,6 +101,10 @@ button {
     cursor: grab;
 }
 
+.task-button {
+    text-align: center;
+}
+
 .add-board-button {
     display: flex;
     justify-content: center;
