@@ -4,7 +4,7 @@
   Express.js
   D3.js
 
-  MySQL
+  MySQL Ver 8.0.40
 
 
   機能
