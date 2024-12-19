@@ -2,6 +2,8 @@
   JavaScript
   Node.js
   Express.js
+  D3.js
+
   MySQL
 
 
