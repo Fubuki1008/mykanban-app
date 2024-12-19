@@ -1,10 +1,10 @@
 # プロジェクト名  カンバン方式のタスク管理アプリです。
-  JavaScript
-  Node.js
-  Express.js
-  D3.js
+  ・JavaScript
+  ・Node.js  v20.18.0
+  ・Express.js
+  ・D3.js
 
-  MySQL Ver 8.0.40
+  ・MySQL Ver 8.0.40
 
 
   機能
